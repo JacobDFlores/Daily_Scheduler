@@ -2,7 +2,7 @@
 A simple calendar app for scheduling your work day
 
 ## Screenshot
-![my screenshot](./deployed%20website%20img.png)
+![my screenshot](./deployed%20website%20image.png)
 
 ## Link to deployed website
 [Link to my deployed website](https://jacobdflores.github.io/Daily_Scheduler/)
