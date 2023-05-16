@@ -1,30 +1,17 @@
-//These variables are linked to the entire hour Elements using jquery
-var hourNine = $('#hour-9');
-var hourTen = $('#hour-10');
-var hourEleven = $('#hour-11');
-var hourTwelve = $('#hour-12');
-var hourThirteen = $('#hour-13');
-var hourFourteen = $('#hour-14');
-var hourFifteen = $('#hour-15');
-var hourSixteen = $('#hour-16');
-var hourSeventeen = $('#hour-17');
-
-//These arrays are used to store the hour elements, and the hours value
-var arrayHourEl = [hourNine, hourTen, hourEleven, hourTwelve,
-                  hourThirteen, hourFourteen, hourFifteen,
-                  hourSixteen, hourSeventeen];
-var arrayHours = [9, 10, 11, 12, 13, 14, 15, 16, 17];
+//A constant used to keep track of the total number of hour elements
+const totalNumHours = 9;
 
 //This function compares the the current indexed hours value to dayjs real time hour value,
-//and updates the current indexed hour elemtent's class accordingly.
+//and updates the corresponding hour element
 function updateHourCard(thisHour){
-  var currentHour = dayjs().hour();//<<<<-----we can substitue 'dayjs().hour();' with any military time number to test the websites reaction. 
-  var hourEl = arrayHourEl[thisHour];
-  if (arrayHours[thisHour] == currentHour){
+  var currentHour = dayjs().hour(); 
+  var hourEl = $('div').children().eq(thisHour);
+  var indexHour = thisHour + 9;
+  if (indexHour == currentHour){
     hourEl.removeClass('past future present');
     hourEl.addClass('present');
   }
-  else if (arrayHours[thisHour] < currentHour){
+  else if (indexHour < currentHour){
     hourEl.removeClass('past future present');
     hourEl.addClass('past');
   }
@@ -38,33 +25,26 @@ function updateHourCard(thisHour){
 function updateDocument(){
   var today = dayjs();
   $('#currentDay').text(today.format('dddd, h:mm:ss a'));
-
-  for (var i = 0; i < arrayHours.length; i++){
+  for (var i = 0; i < totalNumHours; i++){
     updateHourCard(i);
   }
 }
 
+//After the page is loaded then this function reads the local data and updates the corresponding Hours
+function getLocalData(){
+  for (var i = 0; i < totalNumHours; i++){
+    $('textarea').eq(i).text(localStorage.getItem($('div').children().eq(i).attr('id')));
+  }
+}
+
+//When the document is loaded, then it calls the initial functions
 $(document).ready(function(){
   setInterval(updateDocument, 1000);
-}); 
-// TODO: Add a listener for click events on the save button. This code should
-// use the id in the containing time-block as a key to save the user input in
-// local storage. HINT: What does `this` reference in the click listener
-// function? How can DOM traversal be used to get the "hour-x" id of the
-// time-block containing the button that was clicked? How might the id be
-// useful when saving the description in local storage?
-//
-// TODO: Add code to apply the past, present, or future class to each time
-// block by comparing the id to the current hour. HINTS: How can the id
-// attribute of each time-block be used to conditionally add or remove the
-// past, present, and future classes? How can Day.js be used to get the
-// current hour in 24-hour time?
-//
-// TODO: Add code to get any user input that was saved in localStorage and set
-// the values of the corresponding textarea elements. HINT: How can the id
-// attribute of each time-block be used to do this?
-//
-// TODO: Add code to display the current date in the header of the page.
+  getLocalData();
+});
 
-
-
+//When the save button is clicked then it saves the sibling elements string value,
+//and assigns it a key equal to the parent elements id.
+$("button").click(function(event){
+  localStorage.setItem($(this).parent().attr('id'), $(this).siblings("textarea").val())
+});
